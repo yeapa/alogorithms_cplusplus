@@ -76,6 +76,8 @@ void removeNode(ListNode **pHead,int value){
     }
 }
 
+
+
 template <class Key,class Value >
 class BinaryTree {
 private:
@@ -163,7 +165,43 @@ public:
             return pCurNode->val;
         }
     }
+
+    int rank(Key key){
+        return rank(root,key);
+    }
+
+    int rank(Node* pCurNode,Key key){
+        if(pCurNode==NULL){
+            return -1;
+        }  if (key == pCurNode->key){
+            return size(pCurNode->left);
+        }
+        if (key == pCurNode->key){
+            return size(pCurNode->left);
+        }
+        else if(key < pCurNode->key){
+            return rank(pCurNode->left,key);
+        }else{
+            return size(pCurNode->left)+1+rank(pCurNode->right,key);
+        }
+    }
+
+    Key select(int k){
+        return select(root,k)->key;
+    }
+    Node* select(Node* pCurNode,int k){
+        if(pCurNode==NULL) return NULL;
+        if (k==size(pCurNode->left)){
+            return pCurNode;
+        }
+        else if(k<size(pCurNode->left)){
+            return select(pCurNode->left,k);
+        } else{
+            return select(pCurNode->right,k-size(pCurNode->left)-1);
+        }
+    }
 };
+
 int main() {
 
     BinaryTree<int , int > binaryTree;
@@ -173,6 +211,8 @@ int main() {
     cout<<binaryTree.root->val;
     cout<<binaryTree.root->left->val<<endl;
     cout<<binaryTree.get(10)<<endl;
+
+    cout<<binaryTree.rank(9)<<endl;
 
     cout<<binaryTree.max(binaryTree.root)->val<<endl;
     return 0;
