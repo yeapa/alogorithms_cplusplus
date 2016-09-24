@@ -200,6 +200,46 @@ public:
             return select(pCurNode->right,k-size(pCurNode->left)-1);
         }
     }
+
+    void deleteMin(){
+        root=deleteMin(root);
+    }
+
+    Node*  deleteMin(Node* pCurNode){
+        if(pCurNode->left==NULL)
+            return pCurNode->right;
+        pCurNode->left = deleteMin(pCurNode->left);
+        pCurNode->N=size(pCurNode->left)+size(pCurNode->right)+1;
+        return pCurNode;
+
+    }
+
+    void del(Key key){
+        root = del(root,key);
+    }
+    Node* del(Node * pCurNode,Key key){
+        if(pCurNode=NULL) {
+            return NULL;
+        }
+        if (key<pCurNode->val){
+            pCurNode->left=del(pCurNode->left,key);
+        }
+        else if(key>pCurNode->val){
+            pCurNode->right=del(pCurNode->right,key);
+        }else{
+            if(pCurNode->right==NULL){
+                return pCurNode->left;
+            }
+            if (pCurNode->left==NULL){
+                return pCurNode->right;
+            }
+            Node* temp=pCurNode;
+            pCurNode=min(pCurNode->right);
+            pCurNode->left=temp->left;
+        }
+
+        return pCurNode;
+    }
 };
 
 int main() {
@@ -214,7 +254,10 @@ int main() {
 
     cout<<binaryTree.rank(9)<<endl;
 
-    cout<<binaryTree.max(binaryTree.root)->val<<endl;
+    cout<<binaryTree.min(binaryTree.root)->val<<endl;
+
+    binaryTree.deleteMin();
+    cout<<binaryTree.min(binaryTree.root)->val<<endl;
     return 0;
 }
 
