@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stack>
 using namespace std;
 void replaceBlank(char * string,int length){
     int blankNum = 0;
@@ -240,24 +241,196 @@ public:
 
         return pCurNode;
     }
+    void preOrder(Node * pCurNode){
+        if(pCurNode==NULL){
+            return;
+        }
+        if(pCurNode->left!=NULL){
+            preOrder(pCurNode->left);
+        }
+
+        cout<<pCurNode->key<<"  ";
+
+        if(pCurNode->right!=NULL){
+            preOrder(pCurNode->right);
+        }
+
+    }
+
+};
+struct BinaryTreeNode{
+    int m_nValue;
+    BinaryTreeNode* m_pLeft;
+    BinaryTreeNode* m_pRight;
 };
 
+
+BinaryTreeNode* constructCore(int* startPreorder,int * endPreorder,int* startInorder,int* endInorder){
+    int rootValue = startPreorder[0];
+    BinaryTreeNode* root = new BinaryTreeNode();
+    root->m_nValue=rootValue;
+    root->m_pLeft=root->m_pRight=NULL;
+    if(startPreorder == endPreorder){
+        if(startInorder == endInorder && *startInorder==*startPreorder){
+            return root;
+        } else{
+            perror("input invalid");
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    int* rootInorder = startInorder;
+    while (rootInorder<=endInorder && *rootInorder!=rootValue){
+        ++rootInorder;
+    }
+
+    if(rootInorder==endInorder && *rootInorder!=rootValue) {
+        perror("input invalid");
+        exit(EXIT_FAILURE);
+    }
+    int leftLength = rootInorder-startInorder;
+    int *leftPreorderEnd = startPreorder+leftLength;
+    if(leftLength>0){
+        root->m_pLeft = constructCore(startPreorder+1,leftPreorderEnd,startInorder,rootInorder-1);
+    }
+    if(leftLength<endPreorder-startPreorder){
+        root->m_pRight = constructCore(leftPreorderEnd+1,endPreorder,rootInorder+1,endInorder);
+    }
+    return root;
+}
+
+BinaryTreeNode* construct(int* preorder,int* inorder,int length){
+    if(preorder==NULL||inorder==NULL||length<=0){
+        return NULL;
+    }
+    return constructCore(preorder,preorder+length-1,inorder,inorder+length-1);
+
+}
+
+
+
+
+template <class T>
+class CQueue{
+public:
+    CQueue(){}
+    ~CQueue(){}
+
+    void appendTail(T t){
+        while(!stack2.empty()){
+            stack1.push(stack2.top());
+            stack2.pop();
+        }
+        stack1.push(t);
+
+        while (!stack1.empty()){
+            stack2.push(stack1.top());
+            stack1.pop();
+        }
+
+    }
+
+    T deleteHead(){
+        T temp= stack2.top();
+        stack2.pop();
+        return temp;
+    }
+
+private:
+    stack<T> stack1;
+    stack<T> stack2;
+
+};
+
+class Sort{
+    static int partition(int a[],int lo,int hi ){
+//        if(hi<=lo) { return lo;}
+        int i = lo;
+        int j = hi+1;
+        int v = a[lo];
+
+        while(true){
+            while (a[++i]<v)  {
+                if(i>hi) break;
+            }
+            while(a[--j]>v)   {
+                if (j<lo) break;
+            }
+            if(i>=j) break;
+
+            int tempa= a[i];
+            a[i]=a[j];
+            a[j]=tempa;
+        }
+
+        int temp = a[lo];
+        a[j]=a[lo];
+        a[lo]=temp;
+        return j;
+    }
+
+    static void sort(int* a,int lo,int hi){
+        if (hi<=lo){
+            return;
+        }
+        int i = partition(a,lo,hi);
+        sort(a,lo,i-1);
+        sort(a,i+1,hi);
+    }
+
+};
+
+int fibonacci(int n){
+
+    if(n<0) { return -1;}
+    int d[n+1];
+    d[0]=0;
+    d[1]=1;
+    for(int i=2;i<1+n;i++){
+        d[i]=d[i-1]+d[i-2];
+    }
+    cout<<d[n]<<endl;
+
+}
+
+int count1(int n){
+    int count =0;
+    while (n!=0){
+        if(n&1){
+            count++;
+        }
+        n=n>>1;
+    }
+    return count;
+}
+
+
 int main() {
-
     BinaryTree<int , int > binaryTree;
-    binaryTree.put(11,11);
     binaryTree.put(10,10);
-    binaryTree.put(9,9);
-    cout<<binaryTree.root->val;
+    binaryTree.put(6,6);
+    binaryTree.put(14,14);
+    binaryTree.put(4,4);
+    binaryTree.put(8,8);
+    binaryTree.put(12,12);
+    binaryTree.put(16,16);
+    cout<<binaryTree.root->val<<endl;
     cout<<binaryTree.root->left->val<<endl;
-    cout<<binaryTree.get(10)<<endl;
-
+//    cout<<binaryTree.get(10)<<endl;
     cout<<binaryTree.rank(9)<<endl;
-
     cout<<binaryTree.min(binaryTree.root)->val<<endl;
 
-    binaryTree.deleteMin();
-    cout<<binaryTree.min(binaryTree.root)->val<<endl;
+    binaryTree.preOrder(binaryTree.root);
+
+    CQueue<int> queue;
+    queue.appendTail(1);
+    queue.appendTail(2);
+    cout<< queue.deleteHead() <<endl;
+
+    fibonacci(4);
+    cout<<count1(9)<<endl;
+
+
     return 0;
 }
 
