@@ -404,7 +404,98 @@ int count1(int n){
     return count;
 }
 
+class Sales_datas{
+public:
+    Sales_datas(const Sales_datas& orig){
+        bookNo=orig.bookNo;
+        units_sold=orig.units_sold;
+        revenue=orig.revenue;
+    }
 
+    Sales_datas& operator=(const Sales_datas& orig){
+        bookNo=orig.bookNo;
+        units_sold=orig.units_sold;
+        revenue=orig.revenue;
+        return *this;
+    }
+
+private:
+    string bookNo;
+    int units_sold=0;
+    double revenue = 0.0;
+
+};
+
+class Sales_data{
+
+public:
+    Sales_data()= default;
+    Sales_data(const Sales_datas&)= default;
+    Sales_data& operator=(const Sales_data&)= default;
+    ~Sales_data()= default;
+
+};
+
+class HasPtr{
+public:
+    HasPtr(const string &s = string()):ps(new string(s)),i(0)
+    {    }
+
+    HasPtr(const HasPtr &p):ps(new string(*p.ps)),i(p.i)
+    {
+
+    }
+
+    HasPtr& operator=(const HasPtr& p){
+        string* temp = new string(*p.ps);
+        delete(ps);
+        ps=temp;
+        i=p.i;
+        return *this;
+    }
+
+    ~HasPtr(){delete ps;}
+private:
+    string *ps;
+    int i;
+};
+
+class Hasptr1{
+public:
+    Hasptr1(const string& s = string()):ps(new string(s)),i(0),use(new size_t(1)){
+
+    }
+    Hasptr1(const Hasptr1& origin){
+        ps = origin.ps;
+        i=origin.i;
+        use =origin.use;
+        (*use)++;
+    }
+
+    Hasptr1& operator=(const Hasptr1& origin){
+        ps = origin.ps;
+        i=origin.i;
+        use = origin.use;
+        (*origin.use)++;
+        if(--*use==0){
+            delete(use);
+            delete(ps);
+        }
+        return *this;
+    }
+    ~Hasptr1(){
+        if(--*use==0){
+            delete(use);
+            delete(ps);
+        }
+    }
+
+private:
+    string* ps;
+    int i;
+    size_t* use;
+
+};
 int main() {
     BinaryTree<int , int > binaryTree;
     binaryTree.put(10,10);
